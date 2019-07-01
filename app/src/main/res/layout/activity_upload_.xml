@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/black"
+    android:padding="20dp"
+    tools:context=".Upload_Activity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upload Video to Firebase"
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="30sp"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"/>
+
+    <ImageButton
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/upload"
+        android:id="@+id/upbutton"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30sp"
+        android:onClick="UploadVideo"
+        android:contentDescription="Upload Video" />
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_above="@+id/upbutton"
+        android:id="@+id/progbar"
+        />
+</RelativeLayout>

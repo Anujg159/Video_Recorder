@@ -1,7 +1,10 @@
 package com.example.testapplication;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -11,6 +14,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,7 +38,12 @@ public class MainActivity extends AppCompatActivity {
         up.setEnabled(false);
         mStorageRef = FirebaseStorage.getInstance().getReference();
         progressBar= findViewById(R.id.progbar);
-        progressBar.setProgress(0);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)== PackageManager.PERMISSION_DENIED)
+            ActivityCompat.requestPermissions(this ,new String[] {Manifest.permission.CAMERA},Req_Video_Capture);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_DENIED)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                ActivityCompat.requestPermissions(this ,new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},11);
+            }
     }
 
     public void StartTest(View view) {
@@ -49,27 +59,31 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode==RESULT_OK && requestCode==Req_Video_Capture && data!=null && data.getData()!=null) {
             up.setEnabled(true);
             VideoUri = data.getData();
+            grantUriPermission(getPackageName(),VideoUri,Intent.FLAG_GRANT_READ_URI_PERMISSION);
          //   Toast.makeText(this, VideoUri.getLastPathSegment(), Toast.LENGTH_SHORT).show();
         }
     }
 
     public void UploadVideo(View view) {
         //    Uri file = Uri.fromFile(new File("path/to/images/rivers.jpg"));
+        up.setEnabled(false);
         StorageReference VidRef = mStorageRef.child("videos/"+System.currentTimeMillis()+".mp4");
-
         VidRef.putFile(VideoUri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // Get a URL to the uploaded content
                         Toast.makeText(MainActivity.this, "Upload Successful", Toast.LENGTH_SHORT).show();
+                        progressBar.setProgress(0);
                         recreate();
+                        revokeUriPermission(VideoUri,Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
                         Toast.makeText(MainActivity.this, exception.toString(), Toast.LENGTH_SHORT).show();
+                        up.setEnabled(true);
                     }
                 })
                 .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -84,5 +98,8 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 
-
+/*
+W/ExponenentialBackoff: network unavailable, sleeping.
+E/StorageUtil: error getting token java.util.concurrent.ExecutionException: com.google.firebase.internal.api.FirebaseNoSignedInUserException: Please sign in before trying to get a token.
+*/
 
