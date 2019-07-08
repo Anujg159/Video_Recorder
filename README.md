@@ -6,6 +6,7 @@ Clone this repository and import into **Android Studio**
 ```bash
 $ git clone https://github.com/Anujg159/Video_Recorder.git
 ```
+The APK is available in the repository or use the link [Video Recorder.apk](https://github.com/Anujg159/Video_Recorder/raw/master/Video%20Recorder.apk)
 ## Get Started
 The first step would be to record the video you want to upload. Do so by pressing the button **Start Camera**.
 
